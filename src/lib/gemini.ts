@@ -2,7 +2,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { StressTriggerAnalysis, DailyMotivation, StudyLifeBalance } from "../types";
 
 // User-specified model alias
-const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_MODEL = "gemini-3.5-flash";
 
 let aiClient: GoogleGenAI | null = null;
 
