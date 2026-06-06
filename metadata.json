@@ -1,0 +1,6 @@
+{
+  "name": "MindMate Student",
+  "description": "Your AI companion during exams, preparation, and result season. Helps students track mood, analyze stress triggers, and get empathetic support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
