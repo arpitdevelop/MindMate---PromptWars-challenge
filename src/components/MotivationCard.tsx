@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Sparkles, Compass, Lightbulb, Coffee, Loader2, AlertCircle } from "lucide-react";
 import { DailyMotivation } from "../types";
+import { generateDailyMotivation } from "../lib/gemini";
 
 interface MotivationCardProps {
   currentMood: string;
@@ -17,22 +18,12 @@ export default function MotivationCard({ currentMood, stressLevel, currentReflec
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/gemini/motivation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mood: currentMood || "Okay",
-          stressLevel: stressLevel,
-          reflection: currentReflection,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Could not reach Motivation AI. Please try again.");
-      }
-
-      const json = await response.json();
-      setData(json);
+      const data = await generateDailyMotivation(
+        currentMood || "Okay",
+        stressLevel,
+        currentReflection
+      );
+      setData(data);
     } catch (err: any) {
       console.error(err);
       setError(err.message || "An issue occurred connecting to the Gemini engine.");

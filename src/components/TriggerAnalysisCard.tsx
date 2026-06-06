@@ -1,6 +1,7 @@
 import { useState, FormEvent } from "react";
 import { ShieldAlert, Plus, Check, Loader2, AlertCircle, Heart, ArrowUpRight } from "lucide-react";
 import { StressTriggerAnalysis } from "../types";
+import { generateTriggerAnalysis } from "../lib/gemini";
 
 const SUGGESTED_STRESSORS = [
   "Mock Tests",
@@ -42,18 +43,8 @@ export default function TriggerAnalysisCard() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/gemini/triggers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ inputs: selectedStressors }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Could not compute analysis. Please try again.");
-      }
-
-      const json = await response.json();
-      setAnalysis(json);
+      const data = await generateTriggerAnalysis(selectedStressors);
+      setAnalysis(data);
     } catch (err: any) {
       console.error(err);
       setError(err.message || "An error occurred with Gemini analyzer.");

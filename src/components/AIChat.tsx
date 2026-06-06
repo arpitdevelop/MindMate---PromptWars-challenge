@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { MessageCircle, Send, Sparkles, AlertCircle, Loader2, RefreshCw, Heart } from "lucide-react";
 import { ChatMessage } from "../types";
+import { generateCoachResponse } from "../lib/gemini";
 import SupportModal from "./SupportModal";
 
 const CHAT_QUESTION_STARTERS = [
@@ -97,7 +98,7 @@ You can talk to me about anything that's weighing you down. How are you feeling 
     setError(null);
 
     try {
-      // Build proper server-side history payload
+      // Build history payload
       // We map our messages list but skip the very first welcome message to keep payload clean
       const apiHistory = messages
         .filter((m) => m.id !== "welcome-1")
@@ -106,25 +107,12 @@ You can talk to me about anything that's weighing you down. How are you feeling 
           text: m.text,
         }));
 
-      const res = await fetch("/api/gemini/coach", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          history: apiHistory,
-          message: msgText,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Could not receive coach response. Please try again.");
-      }
-
-      const data = await res.json();
+      const coachReplyText = await generateCoachResponse(apiHistory, msgText);
 
       const aiMsg: ChatMessage = {
         id: `ai-${Date.now()}`,
         role: "ai",
-        text: data.text || "I am here supporting you. Try taking a deep breath.",
+        text: coachReplyText,
         timestamp: new Date().toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }),
       };
 

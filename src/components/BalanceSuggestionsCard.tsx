@@ -1,6 +1,7 @@
 import { useState, FormEvent } from "react";
 import { Scale, MessageCircle, HelpCircle, Loader2, AlertCircle, RefreshCw, Calendar, Coffee, Moon } from "lucide-react";
 import { StudyLifeBalance } from "../types";
+import { generateBalanceSuggestions } from "../lib/gemini";
 
 export default function BalanceSuggestionsCard() {
   const [examName, setExamName] = useState("JEE / NEET");
@@ -15,22 +16,8 @@ export default function BalanceSuggestionsCard() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/gemini/balance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          examName,
-          hoursStudied,
-          sleepHours,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Could not compute suggestions. Please try again.");
-      }
-
-      const json = await response.json();
-      setData(json);
+      const data = await generateBalanceSuggestions(examName, hoursStudied, sleepHours);
+      setData(data);
     } catch (err: any) {
       console.error(err);
       setError(err.message || "An error occurred with Gemini balancing algorithm.");
